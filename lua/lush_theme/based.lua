@@ -266,11 +266,15 @@ local theme = lush(function()
 
     -- Zig Specific 
     zigVarDecl { Keyword },
-    zigBuiltinFn { fg = keyword_base.da(15) },
-
+    zigBuiltinFn { fg = orange.li(45) },
 
     -- C specific
     cTSType { fg = fg_base },
+    cTypeDef { Keyword },
+    cStructure { Keyword },
+    cStorageClass { Keyword },
+    cStatement { Keyword },
+
     -- Rust specific
     rsDelimiter { fg = unimportant },
     rsDocComment { fg = yellow.li(90) },
