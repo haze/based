@@ -1,22 +1,4 @@
 --
--- Built with,
---
---        ,gggg,
---       d8" "8I                         ,dPYb,
---       88  ,dP                         IP'`Yb
---    8888888P"                          I8  8I
---       88                              I8  8'
---       88        gg      gg    ,g,     I8 dPgg,
---  ,aa,_88        I8      8I   ,8'8,    I8dP" "8I
--- dP" "88P        I8,    ,8I  ,8'  Yb   I8P    I8
--- Yb,_,d88b,,_   ,d8b,  ,d8b,,8'_   8) ,d8     I8,
---  "Y8P"  "Y888888P'"Y88P"`Y8P' "YY8P8P88P     `Y8
---
-
--- This is a starter colorscheme for use with Lush,
--- for usage guides, see :h lush or :LushRunTutorial
-
---
 -- Note: Because this is lua file, vim will append your file to the runtime,
 --       which means you can require(...) it in other lua code (this is useful),
 --       but you should also take care not to conflict with other libraries.
@@ -34,21 +16,38 @@
 --       With that caveat out of the way...
 --
 
--- Enable lush.ify on this file, run:
---
---  `:Lushify`
---
---  or
---
---  `:lua require('lush').ify()`
-
 local lush = require('lush')
 local hsl = lush.hsl
 
+local red = hsl(5, 100, 50);
+local green = hsl(150, 100, 43);
+local blue = hsl(210, 100, 50);
+local orange = hsl(27, 100, 50);
+local yellow = hsl(60, 100, 50);
+local cyan = hsl(180, 100, 50);
+
+local fg = hsl("#ffffff")
+local fg_base = hsl("#d1d1d1")
+local bg = hsl(50, 3, 8)
+local cursor = hsl(50, 90, 70)
+local selection = hsl(204, 100, 70)
+local comment = bg.li(50)
+local cursor_line = bg.li(5)
+local unimportant = bg.li(60)
+
+local keyword_base = blue.sa(40).li(70)
+local data_base = green.sa(40).li(50)
+
+local regexp_base = hsl("#0080ff")
+
+local type = orange
+
+local visual = hsl("#365059")
+
 local theme = lush(function()
   return {
-    -- The following are all the Neovim default highlight groups from the docs
     -- as of 0.5.0-nightly-446, to aid your theme creation. Your themes should
+    -- The following are all the Neovim default highlight groups from the docs
     -- probably style all of these at a bare minimum.
     --
     -- Referenced/linked groups must come before being referenced/lined,
@@ -59,15 +58,15 @@ local theme = lush(function()
     -- styling for that group (meaning they mostly get styled as Normal)
     -- or leave them commented to apply vims default colouring or linking.
 
-    -- Comment      { }, -- any comment
+    Comment      { fg = comment }, -- any comment
     -- ColorColumn  { }, -- used for the columns set with 'colorcolumn'
     -- Conceal      { }, -- placeholder characters substituted for concealed text (see 'conceallevel')
     -- Cursor       { }, -- character under the cursor
     -- lCursor      { }, -- the character under the cursor when |language-mapping| is used (see 'guicursor')
     -- CursorIM     { }, -- like Cursor, but used when in IME mode |CursorIM|
-    -- CursorColumn { }, -- Screen-column at the cursor, when 'cursorcolumn' is set.
-    -- CursorLine   { }, -- Screen-line at the cursor, when 'cursorline' is set.  Low-priority if foreground (ctermfg OR guifg) is not set.
-    -- Directory    { }, -- directory names (and other special names in listings)
+    CursorLine   { bg = cursor_line }, -- Screen-line at the cursor, when 'cursorline' is set.  Low-priority if foreground (ctermfg OR guifg) is not set.
+    CursorColumn { CursorLine }, -- Screen-column at the cursor, when 'cursorcolumn' is set.
+    Directory    { fg = blue.li(40) }, -- directory names (and other special names in listings)
     -- DiffAdd      { }, -- diff mode: Added line |diff.txt|
     -- DiffChange   { }, -- diff mode: Changed line |diff.txt|
     -- DiffDelete   { }, -- diff mode: Deleted line |diff.txt|
@@ -75,31 +74,31 @@ local theme = lush(function()
     -- EndOfBuffer  { }, -- filler lines (~) after the end of the buffer.  By default, this is highlighted like |hl-NonText|.
     -- TermCursor   { }, -- cursor in a focused terminal
     -- TermCursorNC { }, -- cursor in an unfocused terminal
-    -- ErrorMsg     { }, -- error messages on the command line
+    ErrorMsg     { fg = red.li(50) }, -- error messages on the command line
     -- VertSplit    { }, -- the column separating vertically split windows
     -- Folded       { }, -- line used for closed folds
     -- FoldColumn   { }, -- 'foldcolumn'
-    -- SignColumn   { }, -- column where |signs| are displayed
-    -- IncSearch    { }, -- 'incsearch' highlighting; also used for the text replaced with ":s///c"
+    SignColumn   { fg = comment }, -- column where |signs| are displayed
+    IncSearch    { bg = visual.ro(20).li(40), gui = "bold" }, -- 'incsearch' highlighting; also used for the text replaced with ":s///c"
     -- Substitute   { }, -- |:substitute| replacement text highlighting
-    -- LineNr       { }, -- Line number for ":number" and ":#" commands, and when 'number' or 'relativenumber' option is set.
-    -- CursorLineNr { }, -- Like LineNr when 'cursorline' or 'relativenumber' is set for the cursor line.
-    -- MatchParen   { }, -- The character under the cursor or just before it, if it is a paired bracket, and its match. |pi_paren.txt|
+    LineNr       { fg = comment }, -- Line number for ":number" and ":#" commands, and when 'number' or 'relativenumber' option is set.
+    CursorLineNr { fg = fg_base, bg = cursor_line }, -- Like LineNr when 'cursorline' or 'relativenumber' is set for the cursor line.
+    MatchParen   { fg = cursor, gui = 'bold' }, -- The character under the cursor or just before it, if it is a paired bracket, and its match. |pi_paren.txt|
     -- ModeMsg      { }, -- 'showmode' message (e.g., "-- INSERT -- ")
     -- MsgArea      { }, -- Area for messages and cmdline
     -- MsgSeparator { }, -- Separator for scrolled messages, `msgsep` flag of 'display'
     -- MoreMsg      { }, -- |more-prompt|
     -- NonText      { }, -- '@' at the end of the window, characters from 'showbreak' and other characters that do not really exist in the text (e.g., ">" displayed when a double-wide character doesn't fit at the end of the line). See also |hl-EndOfBuffer|.
-    -- Normal       { }, -- normal text
+    Normal       { fg = fg_base, bg = bg }, -- normal text
     -- NormalFloat  { }, -- Normal text in floating windows.
     -- NormalNC     { }, -- normal text in non-current windows
-    -- Pmenu        { }, -- Popup menu: normal item.
-    -- PmenuSel     { }, -- Popup menu: selected item.
+    Pmenu        { bg = bg.li(20) }, -- Popup menu: normal item.
+    PmenuSel     { bg = visual.de(10) }, -- Popup menu: selected item.
     -- PmenuSbar    { }, -- Popup menu: scrollbar.
     -- PmenuThumb   { }, -- Popup menu: Thumb of the scrollbar.
     -- Question     { }, -- |hit-enter| prompt and yes/no questions
     -- QuickFixLine { }, -- Current |quickfix| item in the quickfix window. Combined with |hl-CursorLine| when the cursor is there.
-    -- Search       { }, -- Last search pattern highlighting (see 'hlsearch').  Also used for similar items that need to stand out.
+    Search       { fg = fg_base, bg = visual.ro(20).da(05) }, -- Last search pattern highlighting (see 'hlsearch').  Also used for similar items that need to stand out.
     -- SpecialKey   { }, -- Unprintable characters: text displayed differently from what it really is.  But not 'listchars' whitespace. |hl-Whitespace|
     -- SpellBad     { }, -- Word that is not recognized by the spellchecker. |spell| Combined with the highlighting used otherwise. 
     -- SpellCap     { }, -- Word that should start with a capital. |spell| Combined with the highlighting used otherwise.
@@ -110,8 +109,8 @@ local theme = lush(function()
     -- TabLine      { }, -- tab pages line, not active tab page label
     -- TabLineFill  { }, -- tab pages line, where there are no labels
     -- TabLineSel   { }, -- tab pages line, active tab page label
-    -- Title        { }, -- titles for output from ":set all", ":autocmd" etc.
-    -- Visual       { }, -- Visual mode selection
+    Title        { fg = orange }, -- titles for output from ":set all", ":autocmd" etc.
+    Visual       { bg = visual }, -- Visual mode selection
     -- VisualNOS    { }, -- Visual mode selection when vim is "Not Owning the Selection".
     -- WarningMsg   { }, -- warning messages
     -- Whitespace   { }, -- "nbsp", "space", "tab" and "trail" in 'listchars'
@@ -123,36 +122,36 @@ local theme = lush(function()
     -- default,
     -- Uncomment and edit if you want more specific syntax highlighting.
 
-    -- Constant       { }, -- (preferred) any constant
-    -- String         { }, --   a string constant: "this is a string"
+    Constant       { fg = data_base }, -- (preferred) any constant
+    String         { fg = data_base }, --   a string constant: "this is a string"
     -- Character      { }, --  a character constant: 'c', '\n'
     -- Number         { }, --   a number constant: 234, 0xff
     -- Boolean        { }, --  a boolean constant: TRUE, false
     -- Float          { }, --    a floating point constant: 2.3e10
 
-    -- Identifier     { }, -- (preferred) any variable name
+    Identifier     { fg = fg_base }, -- (preferred) any variable name
     -- Function       { }, -- function name (also: methods for classes)
 
-    -- Statement      { }, -- (preferred) any statement
-    -- Conditional    { }, --  if, then, else, endif, switch, etc.
-    -- Repeat         { }, --   for, do, while, etc.
+    Statement      { fg = fg.da(20) }, -- (preferred) any statement
+    Conditional    { fg = keyword_base }, --  if, then, else, endif, switch, etc.
+    Repeat         { Conditional }, --   for, do, while, etc.
     -- Label          { }, --    case, default, etc.
-    -- Operator       { }, -- "sizeof", "+", "*", etc.
-    -- Keyword        { }, --  any other keyword
+    Operator       { fg = orange.li(50) }, -- "sizeof", "+", "*", etc.
+    Keyword        { fg = keyword_base }, --  any other keyword
     -- Exception      { }, --  try, catch, throw
 
-    -- PreProc        { }, -- (preferred) generic Preprocessor
+    PreProc        { Keyword }, -- (preferred) generic Preprocessor
     -- Include        { }, --  preprocessor #include
     -- Define         { }, --   preprocessor #define
     -- Macro          { }, --    same as Define
     -- PreCondit      { }, --  preprocessor #if, #else, #endif, etc.
 
-    -- Type           { }, -- (preferred) int, long, char, etc.
+    Type           { fg = type.li(60).sa(70) }, -- (preferred) int, long, char, etc.
     -- StorageClass   { }, -- static, register, volatile, etc.
     -- Structure      { }, --  struct, union, enum, etc.
     -- Typedef        { }, --  A typedef
 
-    -- Special        { }, -- (preferred) any special symbol
+    Special        { Constant }, -- (preferred) any special symbol
     -- SpecialChar    { }, --  special character in a constant
     -- Tag            { }, --    you can use CTRL-] on this
     -- Delimiter      { }, --  character that needs attention
@@ -168,7 +167,7 @@ local theme = lush(function()
 
     -- Error          { }, -- (preferred) any erroneous construct
 
-    -- Todo           { }, -- (preferred) anything that needs extra attention; mostly the keywords TODO FIXME and XXX
+    Todo { fg = unimportant.li(40), gui = 'bold'}, -- (preferred) anything that needs extra attention; mostly the keywords TODO FIXME and XXX
 
     -- These groups are for the native LSP client. Some other LSP clients may
     -- use these groups, or use their own. Consult your LSP client's
@@ -216,7 +215,7 @@ local theme = lush(function()
     -- TSComment            { };    -- For comment blocks.
     -- TSConstructor        { };    -- For constructor calls and definitions: ` { }` in Lua, and Java constructors.
     -- TSConditional        { };    -- For keywords related to conditionnals.
-    -- TSConstant           { };    -- For constants
+    TSConstant           { fg = fg };    -- For constants
     -- TSConstBuiltin       { };    -- For constant that are built in the language: `nil` in Lua.
     -- TSConstMacro         { };    -- For constants that are defined by macros: `NULL` in C.
     -- TSError              { };    -- For syntax/parser errors.
@@ -224,8 +223,8 @@ local theme = lush(function()
     -- TSField              { };    -- For fields.
     -- TSFloat              { };    -- For floats.
     -- TSFunction           { };    -- For function (calls and definitions).
-    -- TSFuncBuiltin        { };    -- For builtin functions: `table.insert` in Lua.
-    -- TSFuncMacro          { };    -- For macro defined fuctions (calls and definitions): each `macro_rules` in Rust.
+    TSFuncBuiltin        { fg = green.de(70).li(40) };    -- For builtin functions: `table.insert` in Lua.
+    TSFuncMacro          { TSConstant, gui = "bold" };    -- For macro defined fuctions (calls and definitions): each `macro_rules` in Rust.
     -- TSInclude            { };    -- For includes: `#include` in C, `use` or `extern crate` in Rust, or `require` in Lua.
     -- TSKeyword            { };    -- For keywords that don't fall in previous categories.
     -- TSKeywordFunction    { };    -- For keywords used to define a fuction.
@@ -238,20 +237,20 @@ local theme = lush(function()
     -- TSParameter          { };    -- For parameters of a function.
     -- TSParameterReference { };    -- For references to parameters of a function.
     -- TSProperty           { };    -- Same as `TSField`.
-    -- TSPunctDelimiter     { };    -- For delimiters ie: `.`
-    -- TSPunctBracket       { };    -- For brackets and parens.
-    -- TSPunctSpecial       { };    -- For special punctutation that does not fall in the catagories before.
+    TSPunctDelimiter     { fg = unimportant.li(20) };    -- For delimiters ie: `.`
+    TSPunctBracket       { TSPunctDelimiter };    -- For brackets and parens.
+    TSPunctSpecial       { TSPunctDelimiter };    -- For special punctutation that does not fall in the catagories before.
     -- TSRepeat             { };    -- For keywords related to loops.
-    -- TSString             { };    -- For strings.
-    -- TSStringRegex        { };    -- For regexes.
+    TSString             { String };    -- For strings.
+    TSStringRegex        { fg = regexp_base.li(60) };    -- For regexes.
     -- TSStringEscape       { };    -- For escape characters within a string.
     -- TSSymbol             { };    -- For identifiers referring to symbols or atoms.
-    -- TSType               { };    -- For types.
+    TSType               { fg = fg };    -- For types.
     -- TSTypeBuiltin        { };    -- For builtin types.
     -- TSVariable           { };    -- Any variable name that does not have another highlight.
     -- TSVariableBuiltin    { };    -- Variable names that are defined by the languages, like `this` or `self`.
 
-    -- TSTag                { };    -- Tags like html tag names.
+    TSTag                { fg = unimportant };    -- Tags like html tag names.
     -- TSTagDelimiter       { };    -- Tag delimiter like `<` `>` `/`
     -- TSText               { };    -- For strings considered text in a markup language.
     -- TSEmphasis           { };    -- For text to be represented with emphasis.
@@ -260,7 +259,47 @@ local theme = lush(function()
     -- TSTitle              { };    -- Text that is part of a title.
     -- TSLiteral            { };    -- Literal text.
     -- TSURI                { };    -- Any URI like a link or email.
+    --
+    --
+    -- Plugin specific 
+    IndentBlanklineChar { fg = hsl('#505050') },
 
+    -- Zig Specific 
+    zigVarDecl { Keyword },
+    zigBuiltinFn { fg = keyword_base.da(15) },
+
+
+    -- C specific
+    cTSType { fg = fg_base },
+    -- Rust specific
+    rsDelimiter { fg = unimportant },
+    rsDocComment { fg = yellow.li(90) },
+    rsTypeDef { fg = fg_base, gui = 'bold' },
+    rsUserType { rsTypeDef },
+    rsLibraryType { fg = green.de(50).li(70) },
+    rsForeignType { Type },
+    rsAttribute { TSFuncBuiltin },
+    -- JavaSCript specific
+    jsFunctionBraces { fg = unimportant },
+    jsFunctionParens { jsFunctionBraces },
+    jsIfBraces { jsFunctionBraces },
+    jsIfParens{ jsFunctionBraces },
+    jsObjectBraces { jsFunctionBraces },
+    jsVariableType { Keyword },
+    jsSemiColon { jsFunctionBraces },
+    jsDot { jsFunctionBraces },
+    jsAccessorBrackets { jsFunctionBraces },
+    jsLoopParens { jsFunctionBraces },
+    jsBraces { jsFunctionBraces },
+    jsDestructuringBrackets { jsFunctionBraces },
+    jsParen { jsFunctionBraces },
+    jsParens { jsFunctionBraces },
+    jsBrackets { jsFunctionBraces },
+    jsComma { jsFunctionBraces },
+    jsOf { Type },
+    jsUnaryOperator { Type },
+    jsBuiltinValues { fg = type.li(70).sa(90) },
+    jsMethod { fg = fg_base, gui = 'bold'},
   }
 end)
 
